@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request
 import requests
 import json
+import meal_suggestor
 
 # Flask Instance
 app = Flask(__name__)
@@ -12,6 +13,23 @@ def calc_html():
       return render_template('calc.html')
     else:
       return calc_result()
+
+@app.route('/tracker.html', methods=['GET', 'POST'])
+def tracker_html():
+    if request.method == 'GET':
+      return render_template('tracker.html')
+    else:
+      food = meal_suggestor.select_food(300)
+      if food == -1:
+        return render_template(
+          'tracker.html',
+          result="No food found, starve!"
+        )
+      else:
+        return render_template(
+          'tracker.html',
+          result = food
+        )
 
 if __name__ == '__main__':
     app.debug = True
@@ -58,5 +76,3 @@ def calc_result():
     Gender=gender,
     result=BMR
   )
-      
-      
