@@ -148,10 +148,6 @@ header {
 
 }
 
-body {
-  position: relative;
-  min-height: 100vh;
-} 
  
 h1{
   text-align: center;
@@ -166,6 +162,7 @@ h1{
   padding-top: 50px;
   overflow: auto;
   text-align: center;
+  
 }
 
 footer {
@@ -221,5 +218,3 @@ display:block;
 background-color: white;
 border-radius: 5px;
 }
-
-/*Calorie Calculator styling*/
