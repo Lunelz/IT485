@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, url_for, redirect
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
@@ -14,6 +15,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 bcrypt = Bcrypt(app)
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 app.config['SECRET_KEY'] = 'thisisasecretkey'
 
 login_manager = LoginManager()
@@ -28,9 +30,12 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), nullable=False, unique=True)
     password = db.Column(db.String(80), nullable=False)
-
-with app.app_context():
-    db.create_all()
+    dailyCalorieIntake = db.Column(db.Integer) 
+    weeklyCalorieIntake = db.Column(db.Integer) 
+    
+    def __init__(self, dailyCalorieIntake, weeklyCalorieIntake):
+      self.dailyCalorieIntake = dailyCalorieIntake
+      self.weeklyCalorieIntake = weeklyCalorieIntake
 
 class RegisterForm(FlaskForm):
     username = StringField(validators=[
@@ -164,3 +169,8 @@ def calc_result():
     Gender=gender,
     result=BMR
   )
+
+if __name__ == "__main__":
+  with app.app_context():
+    db.create_all()
+  app.run(debug=True)
