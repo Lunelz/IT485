@@ -52,7 +52,19 @@
         <option value="Woman" {% if Gender == "Woman" %} selected {% endif %}>Woman</option>
         <option value="Man" {% if Gender == "Man" %} selected {% endif %}>Man</option>
     </select>
+    
     <br/>
+    <label class="checkbox">Vegetarian
+        <input type="checkbox" {{"checked = 'checked'" if Vegetarian else ""}} name="Vegetarian" id="Vegetarian">
+    </label>
+    <label class="checkbox">Vegan
+        <input type="checkbox" {{"checked = 'checked'" if Vegan else ""}} name="Vegan" id="Vegan">
+    </label>
+    <label class="checkbox">No dairy
+        <input type="checkbox" {{"checked = 'checked'" if NoDairy else ""}} name="NoDairy" id="NoDairy">
+    </label>
+    <br/>
+
     <input type="submit" value="Calculate">
     <input type="reset" value="Reset" style="color: red;"/>
 </div>

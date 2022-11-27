@@ -34,8 +34,9 @@
 <body>
     <form method="post" action="{{ url_for('tracker_html')}}" id="tracker_form">
         <div class="inputs">
-            <input type="submit" value="Calculate">
+            <input type="submit" value="Calculate" name="booton">
         </div>
         {{result}}
+        <input type="submit" value="Select" name="booton">
         </form>
 </body>
