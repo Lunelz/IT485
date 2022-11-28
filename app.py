@@ -132,6 +132,19 @@ def tracker_html():
           result = food
         )
 
+"""@ app.route('/dailyintake', methods=['GET', 'POST'])
+def dailyintake():
+    form = CalcForm()
+
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data)
+        new_user = User(username=form.username.data, password=hashed_password)
+        db.session.add(new_user)
+        db.session.commit()
+        return redirect(url_for('login'))
+
+    return render_template('brian_register.html', form=form)
+"""
 if __name__ == '__main__':
     app.debug = True
     app.run()
