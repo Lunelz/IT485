@@ -1,13 +1,10 @@
-from re import X
 from flask import Flask
 import sqlite3
 from flask import g
 from random import shuffle
-from app import db, User
 
 # Name of database
-app = Flask(__name__)
-Database = 'sqlite/food.db'
+Database = 'sqlite/users.db'
 
 def get_db():
     db =getattr(g, '_database', None)
@@ -27,22 +24,18 @@ def query_db(query, args=(), one=False):
     cur.close()
     return (rv[0] if rv else None) if one else rv
 
-
-def select_food(user):
-    # conn = sqlite3.connect(Database)
-    # c = conn.cursor()
-    # c.execute("SELECT * FROM food")
-    # foods = c.fetchall()
-    # conn.commit()
-    # conn.close()
-    # shuffle(foods)
-    # for food in foods:
-    #     food_cals = food[1]
-    #     if food_cals <= calories:
-    #         return food
-    x = User.query.filter_by(username=user).first()
-
-    print (x)
+def add_calories(calories):
+    conn = sqlite3.connect(Database)
+    c = conn.cursor()
+    c.execute("SELECT * FROM food") c.execute("INSERT INTO users VALUES (?,?)", (username, password))
+    foods = c.fetchall()
+    conn.commit()
+    conn.close()
+    shuffle(foods)
+    for food in foods:
+        food_cals = food[1]
+        if food_cals <= calories:
+            return food
     return -1
 
 
