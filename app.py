@@ -63,20 +63,19 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Login')
 
 
-"""@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def home():
     if request.method == 'GET':
       return render_template('index.html')
     else:
-      return home()"""
+      return home()
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/calc.html', methods=['GET', 'POST'])
 def calc_html():
     if request.method == 'GET':
       return render_template('calc.html')
     else:
       return calc_result()
-
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
