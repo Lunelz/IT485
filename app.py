@@ -145,10 +145,11 @@ def dailyintake():
 
     return render_template('brian_register.html', form=form)
 """
-if __name__ == '__main__':
+
+"""if __name__ == '__main__':
     app.debug = True
     app.run()
-
+"""
 # Calculator operations
 def calc_result(): 
   weight_input=request.form['Weight']
