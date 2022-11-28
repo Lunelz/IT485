@@ -62,12 +62,21 @@ class LoginForm(FlaskForm):
 
     submit = SubmitField('Login')
 
+
+"""@app.route('/', methods=['GET', 'POST'])
+def home():
+    if request.method == 'GET':
+      return render_template('index.html')
+    else:
+      return home()"""
+
 @app.route('/', methods=['GET', 'POST'])
 def calc_html():
     if request.method == 'GET':
       return render_template('calc.html')
     else:
       return calc_result()
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -77,7 +86,7 @@ def login():
         if user:
             if bcrypt.check_password_hash(user.password, form.password.data):
                 login_user(user)
-                return redirect(url_for('tracker_html'))
+                return redirect(url_for('calc_html'))
     return render_template('brian_login.html', form=form)
 
 
@@ -91,7 +100,7 @@ def login():
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('login'))
+    return redirect(url_for('home'))
 
 
 @ app.route('/register', methods=['GET', 'POST'])
@@ -174,3 +183,4 @@ if __name__ == "__main__":
   with app.app_context():
     db.create_all()
   app.run(debug=True)
+

@@ -25,9 +25,13 @@ h1, h2, h3, h4, h5, h6 {
           <li><a href="/">Home</a></li>
           <li><a href="MyCalories.html">My Calories</a></li>
           <li><a href="About.html">About</a></li>
+
       </ul>
   </nav>
-  <button onclick="document.getElementById('id01').style.display='block'" class="log" style="width:auto;">Login</button>
+  <a class="log" href="{{url_for('login')}}">Login</a>
+  <a class="log" href="{{url_for('register')}}">Register</a>
+  <!--<button onclick="document.getElementById('id01').style.display='block'" class="log" style="width:auto;">Login</button>-->
+
   <p class="menu">Menu</p>
 </header>
 <div class="overlay">
