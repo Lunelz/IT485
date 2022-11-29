@@ -154,7 +154,7 @@ def calc_result():
       Gender=gender,
       result="Don't leave blank input fields!"
     )
-
+#
   weight_input=int(weight_input)
   heightft_input=int(heightft_input)
   heightin_input=int(heightin_input)
