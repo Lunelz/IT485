@@ -8,7 +8,8 @@ from wtforms.validators import InputRequired, Length, ValidationError
 from flask_bcrypt import Bcrypt
 import requests
 import json
-import meal_suggestor
+import sqlite3
+from random import shuffle
 
 #Flask Instance
 app = Flask(__name__)
@@ -36,6 +37,15 @@ class User(db.Model, UserMixin):
     def __init__(self, dailyCalorieIntake, weeklyCalorieIntake):
       self.dailyCalorieIntake = dailyCalorieIntake
       self.weeklyCalorieIntake = weeklyCalorieIntake
+    remainingCalorieIntake = db.Column(db.Integer)
+    weeklyCalorieIntake = db.Column(db.Integer)
+    vegetarian = db.Column(db.Integer)
+    vegan = db.Column(db.Integer)
+    no_dairy = db.Column(db.Integer)
+
+
+with app.app_context():
+    db.create_all()
 
 class RegisterForm(FlaskForm):
     username = StringField(validators=[
@@ -115,34 +125,79 @@ def register():
 
     return render_template('brian_register.html', form=form)
 
+currentfood = ""
 @app.route('/tracker.html', methods=['GET', 'POST'])
 def tracker_html():
     if request.method == 'GET':
       return render_template('tracker.html')
     else:
-      food = meal_suggestor.select_food(300)
-      if food == -1:
-        return render_template(
-          'tracker.html',
-          result="No food found, starve!"
-        )
+      global currentfood
+      if request.form["booton"] == "Calculate":
+        with app.app_context():
+          food = select_food()
+        if food == -1:
+          currentfood = ""
+          return render_template(
+            'tracker.html',
+            result="No food found, starve!"
+          )
+        else:
+          currentfood = food
+          return render_template(
+            'tracker.html',
+            result = food
+          )
       else:
-        return render_template(
-          'tracker.html',
-          result = food
-        )
+          if currentfood != "":
+            user = User.query.filter_by(username=current_user.username).first()
+            user.remainingCalorieIntake -= currentfood[1]
+            db.session.commit()
+            selectedfood = currentfood
+            currentfood = ""
+            return render_template(
+              'tracker.html',
+              result = selectedfood[0]+" has been selected!"
+            )
+          else:
+            return render_template(
+              'tracker.html',
+              result = "No food has been selected."
+            )
 
-if __name__ == '__main__':
+"""@ app.route('/dailyintake', methods=['GET', 'POST'])
+def dailyintake():
+    form = CalcForm()
+
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data)
+        new_user = User(username=form.username.data, password=hashed_password)
+        db.session.add(new_user)
+        db.session.commit()
+        return redirect(url_for('login'))
+
+    return render_template('brian_register.html', form=form)
+"""
+
+"""if __name__ == '__main__':
     app.debug = True
     app.run()
+"""
+if __name__ == '__main__':
+    with app.app_context():
+      app.debug = True
+      app.run()
 
 # Calculator operations
 def calc_result(): 
+  print(request.form)
   weight_input=request.form['Weight']
   heightft_input=request.form['HeightFeet']
   heightin_input=request.form['HeightInch']
   age_input=request.form['Age']
   gender=request.form['Gender']
+  vegetarian_input = "Vegetarian" in request.form
+  vegan_input = "Vegan" in request.form
+  nodairy_input = "NoDairy" in request.form
 
   if weight_input == "" or heightft_input == "" or heightin_input == "" or age_input == "" or gender == "":
     return render_template(
@@ -159,6 +214,9 @@ def calc_result():
   heightft_input=int(heightft_input)
   heightin_input=int(heightin_input)
   age_input=int(age_input)
+  vegetarian_input=int(vegetarian_input)
+  vegan_input=int(vegan_input)
+  nodairy_input=int(nodairy_input)
 
   totalinches = (heightft_input * 12) + heightin_input
 
@@ -168,6 +226,15 @@ def calc_result():
   elif gender == "Man":
     BMR = round(66.47 + (6.24 * weight_input) + (12.7 * totalinches) - (6.75 * age_input))
 
+  user = User.query.filter_by(username=current_user.username).first()
+  user.weeklyCalorieIntake = BMR
+  user.vegetarian = vegetarian_input
+  user.vegan = vegan_input
+  user.no_dairy = nodairy_input
+  db.session.commit()
+
+
+
   return render_template(
     'calc.html',
     Weight=weight_input,
@@ -175,6 +242,9 @@ def calc_result():
     HeightInch=heightin_input,
     Age=age_input,
     Gender=gender,
+    Vegetarian=vegetarian_input,
+    Vegan=vegan_input,
+    NoDairy=nodairy_input,
     result=BMR
   )
 
@@ -183,3 +253,21 @@ if __name__ == "__main__":
     db.create_all()
   app.run(debug=True)
 
+def select_food():
+    user = User.query.filter_by(username=current_user.username).first()
+    conn = sqlite3.connect('sqlite/food.db')
+    c = conn.cursor()
+    c.execute("SELECT * FROM food")
+    foods = c.fetchall()
+    conn.commit()
+    conn.close()
+    shuffle(foods)
+    for food in foods:
+        food_cals = food[1]
+        food_vegetarian = food[5]
+        food_nodairy = food[6]
+        food_vegan = food[7]
+        if (user.vegetarian == 1 and food_vegetarian != 1) or (user.vegan == 1 and food_vegan != 1) or (user.no_dairy == 1 and food_nodairy != 1): continue
+        if food_cals <= user.remainingCalorieIntake:
+            return food
+    return -1
