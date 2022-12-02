@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, url_for, redirect
+from flask import Flask, render_template, request, url_for, redirect, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
@@ -31,12 +31,6 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), nullable=False, unique=True)
     password = db.Column(db.String(80), nullable=False)
-    dailyCalorieIntake = db.Column(db.Integer) 
-    weeklyCalorieIntake = db.Column(db.Integer) 
-    
-    def __init__(self, dailyCalorieIntake, weeklyCalorieIntake):
-      self.dailyCalorieIntake = dailyCalorieIntake
-      self.weeklyCalorieIntake = weeklyCalorieIntake
     remainingCalorieIntake = db.Column(db.Integer)
     weeklyCalorieIntake = db.Column(db.Integer)
     vegetarian = db.Column(db.Integer)
@@ -87,6 +81,13 @@ def calc_html():
     else:
       return calc_result()
 
+@app.route('/about.html', methods=['GET', 'POST'])
+def about_html():
+    if request.method == 'GET':
+      return render_template('about.html')
+    else:
+      return about_html()
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -95,6 +96,7 @@ def login():
         if user:
             if bcrypt.check_password_hash(user.password, form.password.data):
                 login_user(user)
+                session['logged_in'] = True
                 return redirect(url_for('calc_html'))
     return render_template('brian_login.html', form=form)
 
@@ -109,6 +111,7 @@ def login():
 @login_required
 def logout():
     logout_user()
+    session['logged_in'] = False
     return redirect(url_for('home'))
 
 
@@ -181,11 +184,12 @@ def dailyintake():
 """if __name__ == '__main__':
     app.debug = True
     app.run()
-"""
+
 if __name__ == '__main__':
     with app.app_context():
       app.debug = True
       app.run()
+"""
 
 # Calculator operations
 def calc_result(): 
@@ -227,7 +231,7 @@ def calc_result():
     BMR = round(66.47 + (6.24 * weight_input) + (12.7 * totalinches) - (6.75 * age_input))
 
   user = User.query.filter_by(username=current_user.username).first()
-  user.weeklyCalorieIntake = BMR
+  user.weeklyCalorieIntake = BMR * 7
   user.vegetarian = vegetarian_input
   user.vegan = vegan_input
   user.no_dairy = nodairy_input

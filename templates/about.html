@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Tracker</title>
+    <link href="/static/tracker.css" rel="stylesheet" type="text/css" />
+</head>
+
+<!-- Code for topnav-->
+<header>
+    <a class="logo" href="/"><img src="/static/imgs/logo.png" alt="logo" style="height:60px;"></a>
+    <nav>
+        <ul class="nav__links">
+            <li><a href="/">Home</a></li>
+            <li><a href="MyCalories.html">My Calories</a></li>
+            <li><a href="templates/about.html">About</a></li>
+        </ul>
+    </nav>
+    <a class="log" href="{{url_for('logout')}}">Logout</a>
+    <p class="menu">Menu</p>
+  </header>
+  <div class="overlay">
+    <a class="close">&times;</a>
+    <div class="overlay__content">
+        <a href="#">Home</a>
+        <a href="#">My Calories</a>
+        <a href="#">About</a>
+    </div>
+  </div>
+  <script type="text/javascript" src="mobile.js"></script>
+
+<body>
+    <form method="post" action="{{ url_for('tracker_html')}}" id="tracker_form">
+        <div class="inputs">
+            <input type="submit" value="Calculate" name="booton">
+        </div>
+        {{result}}
+        <input type="submit" value="Select" name="booton">
+        </form>
+</body>
