@@ -88,6 +88,20 @@ def about_html():
     else:
       return about_html()
 
+@app.route('/user.html', methods=['GET', 'POST'])
+def user_html():
+    user = User.query.filter_by(username=current_user.username).first()
+    username = user.username
+    remaining = user.remainingCalorieIntake
+    weekly =  user.weeklyCalorieIntake
+    vegetarian = user.vegetarian
+    vegan = user.vegan
+    no_dairy = user.no_dairy
+    if request.method == 'GET':
+      return render_template('user.html', username=username, remaining=remaining, weekly=weekly, vegetarian=vegetarian, vegan=vegan, no_dairy=no_dairy)
+    else:
+      return user_html()
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()

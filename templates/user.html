@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
-    <title>About</title>
+    <title>My Account</title>
     <link href="/static/tracker.css" rel="stylesheet" type="text/css" />
 </head>
 
@@ -34,11 +34,59 @@
   <script type="text/javascript" src="mobile.js"></script>
 
 <body>
-    <form method="post" action="{{ url_for('tracker_html')}}" id="tracker_form">
-        <div class="inputs">
-            <input type="submit" value="Calculate" name="booton">
-        </div>
-        {{result}}
-        <input type="submit" value="Select" name="booton">
-        </form>
+<table>
+    <tr> <!-- username -->
+        <td>
+            Username
+        </td>
+        <td>
+            {{username}}
+        </td>
+    </tr>
+
+    <tr> <!-- remaining calorie intake --> 
+        <td>
+        Remaining Calories for the Week
+        </td>
+        <td>
+            {{remaining}}
+        </td>
+    </tr>
+
+    <tr> <!-- weekly calorie intake -->
+        <td>
+            Weekly Calorie Intake
+        </td>
+        <td>
+            {{weekly}}
+        </td>
+    </tr>
+
+    <tr> <!-- vegetarian -->
+        <td>
+            Vegetarian
+        </td>
+        <td>
+            {{vegetarian}}
+        </td>
+    </tr>
+
+    <tr> <!-- vegen -->
+        <td>
+            Vegan
+        </td>
+        <td>
+            {{vegan}}
+        </td>
+    </tr>
+
+    <tr> <!-- no dairy -->
+        <td>
+            Non-dairy
+        </td>
+        <td>
+            {{no_dairy}}
+        </td>
+    </tr>
+</table>
 </body>
