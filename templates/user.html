@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
     <title>My Account</title>
-    <link href="/static/tracker.css" rel="stylesheet" type="text/css" />
+    <link href="/static/user.css" rel="stylesheet" type="text/css" />
 </head>
 
 <!-- Code for topnav-->
@@ -34,36 +34,33 @@
   <script type="text/javascript" src="mobile.js"></script>
 
 <body>
-<table>
-    <tr> <!-- username -->
-        <td>
-            Username
-        </td>
-        <td>
-            {{username}}
-        </td>
-    </tr>
+<table class="user-table">
+    <th colspan="2" > <!-- username -->
 
-    <tr> <!-- remaining calorie intake --> 
-        <td>
-        Remaining Calories for the Week
+        <p class="username">{{username}}</p>
+
+    </th>
+
+    <tr class="alt1"> <!-- remaining calorie intake --> 
+        <td class="left-lane">
+        Remaining Calories
         </td>
         <td>
             {{remaining}}
         </td>
     </tr>
 
-    <tr> <!-- weekly calorie intake -->
-        <td>
-            Weekly Calorie Intake
+    <tr class="alt2"> <!-- weekly calorie intake -->
+        <td class="left-lane">
+            Weekly Calorie Allowance
         </td>
         <td>
             {{weekly}}
         </td>
     </tr>
 
-    <tr> <!-- vegetarian -->
-        <td>
+    <tr class="alt1"> <!-- vegetarian -->
+        <td class="left-lane">
             Vegetarian
         </td>
         <td>
@@ -71,8 +68,8 @@
         </td>
     </tr>
 
-    <tr> <!-- vegen -->
-        <td>
+    <tr class="alt2"> <!-- vegen -->
+        <td class="left-lane">
             Vegan
         </td>
         <td>
@@ -80,13 +77,20 @@
         </td>
     </tr>
 
-    <tr> <!-- no dairy -->
-        <td>
+    <tr class="alt1"> <!-- no dairy -->
+        <td class="left-lane">
             Non-dairy
         </td>
         <td>
             {{no_dairy}}
         </td>
     </tr>
+
+    <th colspan="2" > <!-- button that takes users back to calculator to edit values -->
+        <form class="edit-button" action="calc.html" method="get">
+            <input type="submit" value="Make Changes" 
+                 name="Submit" id="frm1_submit" />
+        </form>
+    </th>
 </table>
 </body>
