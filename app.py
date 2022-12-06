@@ -258,6 +258,7 @@ def calc_result():
 
   user = User.query.filter_by(username=current_user.username).first()
   user.weeklyCalorieIntake = BMR * 7
+  user.remainingCalorieIntake = user.weeklyCalorieIntake
   user.vegetarian = vegetarian_input
   user.vegan = vegan_input
   user.no_dairy = nodairy_input
