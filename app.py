@@ -1,3 +1,4 @@
+from asyncio.windows_events import NULL
 from flask import Flask, render_template, request, url_for, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
@@ -34,10 +35,8 @@ class User(db.Model, UserMixin):
     vegetarian = db.Column(db.Integer)
     vegan = db.Column(db.Integer)
     no_dairy = db.Column(db.Integer)
+    history =db.Column(db.Text)
 
-
-with app.app_context():
-    db.create_all()
 
 class RegisterForm(FlaskForm):
     username = StringField(validators=[
@@ -129,12 +128,18 @@ def tracker_html():
           currentfood = food
           return render_template(
             'tracker.html',
-            result = food
+            result = food[0],
+            result2 = food[1]
           )
       else:
           if currentfood != "":
             user = User.query.filter_by(username=current_user.username).first()
             user.remainingCalorieIntake -= currentfood[1]
+            if user.history is None or user.history == "":
+              user.history = ""
+              user.history += str(currentfood[9])
+            else:
+              user.history += "," + str(currentfood[9])
             db.session.commit()
             selectedfood = currentfood
             currentfood = ""
@@ -147,12 +152,7 @@ def tracker_html():
               'tracker.html',
               result = "No food has been selected."
             )
-
-if __name__ == '__main__':
-    with app.app_context():
-      app.debug = True
-      app.run()
-
+          
 # Calculator operations
 def calc_result(): 
   print(request.form)
@@ -194,6 +194,8 @@ def calc_result():
 
   user = User.query.filter_by(username=current_user.username).first()
   user.weeklyCalorieIntake = BMR
+  if user.remainingCalorieIntake is None:
+    user.remainingCalorieIntake = BMR
   user.vegetarian = vegetarian_input
   user.vegan = vegan_input
   user.no_dairy = nodairy_input
@@ -232,3 +234,12 @@ def select_food():
         if food_cals <= user.remainingCalorieIntake:
             return food
     return -1
+
+
+if __name__ == '__main__':
+    with app.app_context():
+      db.create_all()
+      app.debug = True
+      app.run()
+
+    
