@@ -1,3 +1,4 @@
+from asyncio.windows_events import NULL
 from flask import Flask, render_template, request, url_for, redirect, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -38,10 +39,8 @@ class User(db.Model, UserMixin):
     vegetarian = db.Column(db.Integer)
     vegan = db.Column(db.Integer)
     no_dairy = db.Column(db.Integer)
+    history =db.Column(db.Text)
 
-
-with app.app_context():
-    db.create_all()
 
 class RegisterForm(FlaskForm):
     username = StringField(validators=[
@@ -176,12 +175,18 @@ def tracker_html():
           currentfood = food
           return render_template(
             'tracker.html',
-            result = food
+            result = food[0],
+            result2 = food[1]
           )
       else:
           if currentfood != "":
             user = User.query.filter_by(username=current_user.username).first()
             user.remainingCalorieIntake -= currentfood[1]
+            if user.history is None or user.history == "":
+              user.history = ""
+              user.history += str(currentfood[9])
+            else:
+              user.history += "," + str(currentfood[9])
             db.session.commit()
             selectedfood = currentfood
             currentfood = ""
@@ -259,8 +264,9 @@ def calc_result():
     BMR = round(66.47 + (6.24 * weight_input) + (12.7 * totalinches) - (6.75 * age_input))
 
   user = User.query.filter_by(username=current_user.username).first()
-  user.weeklyCalorieIntake = BMR * 7
-  user.remainingCalorieIntake = user.weeklyCalorieIntake
+  user.weeklyCalorieIntake = BMR
+  if user.remainingCalorieIntake is None:
+    user.remainingCalorieIntake = BMR
   user.vegetarian = vegetarian_input
   user.vegan = vegan_input
   user.no_dairy = nodairy_input
@@ -320,3 +326,12 @@ def weekly_reset():
 
   t = Timer(secs, calorie_refill)
   t.start()
+
+
+if __name__ == '__main__':
+    with app.app_context():
+      db.create_all()
+      app.debug = True
+      app.run()
+
+    
