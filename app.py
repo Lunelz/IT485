@@ -10,6 +10,8 @@ import requests
 import json
 import sqlite3
 from random import shuffle
+from datetime import datetime, timedelta
+from threading import Timer
 
 #Flask Instance
 app = Flask(__name__)
@@ -302,3 +304,17 @@ def select_food():
         if food_cals <= user.remainingCalorieIntake:
             return food
     return -1
+
+def calorie_refill():
+  user = User.query.filter_by(username=current_user.username).first()
+  user.remainingCalorieIntake = user.weeklyCalorieIntake
+
+def weekly_reset():
+  x=datetime.today()
+  y = x.replace(day=x.day, hour=0, minute=0, second=0, microsecond=0) + timedelta(days=7)
+  delta_t=y-x
+
+  secs=delta_t.total_seconds()
+
+  t = Timer(secs, calorie_refill)
+  t.start()
