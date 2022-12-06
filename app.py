@@ -307,11 +307,13 @@ def select_food():
 
 def calorie_refill():
   user = User.query.filter_by(username=current_user.username).first()
-  user.remainingCalorieIntake = user.weeklyCalorieIntake
+  # user.remainingCalorieIntake = user.weeklyCalorieIntake
+  user.remainingCalorieIntake = user.remainingCalorieIntake - 1
+  db.session.commit()
 
 def weekly_reset():
   x=datetime.today()
-  y = x.replace(day=x.day, hour=0, minute=0, second=0, microsecond=0) + timedelta(days=7)
+  y = x.replace(day=x.day, hour=0, minute=0, second=0, microsecond=0) + timedelta(seconds=1)
   delta_t=y-x
 
   secs=delta_t.total_seconds()
