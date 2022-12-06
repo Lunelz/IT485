@@ -94,9 +94,21 @@ def user_html():
     username = user.username
     remaining = user.remainingCalorieIntake
     weekly =  user.weeklyCalorieIntake
-    vegetarian = user.vegetarian
-    vegan = user.vegan
-    no_dairy = user.no_dairy
+    # vegetarian = user.vegetarian
+    if user.vegetarian == 0:
+      vegetarian = "No"
+    else:
+      vegetarian = "Yes"
+    if user.vegan == 0:
+      vegan = "No"
+    else:
+      vegan = "Yes"
+    if user.no_dairy == 0:
+      no_dairy = "No"
+    else:
+      no_dairy = "Yes"
+    # vegan = user.vegan
+    # no_dairy = user.no_dairy
     if request.method == 'GET':
       return render_template('user.html', username=username, remaining=remaining, weekly=weekly, vegetarian=vegetarian, vegan=vegan, no_dairy=no_dairy)
     else:
