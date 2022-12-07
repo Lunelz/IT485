@@ -102,10 +102,10 @@ def user_html():
     user = User.query.filter_by(username=current_user.username).first()
     conn = sqlite3.connect('sqlite/food.db')
     c = conn.cursor()
-    c.execute("SELECT * FROM food")
-    foods = c.fetchall()
-    conn.commit()
-    conn.close()  
+    # c.execute("SELECT * FROM food")
+    # foods = c.fetchall()
+    # conn.commit()
+    # conn.close()  
     # meal = foods[0]
     # identifier = foods[1]
     username = user.username
@@ -126,27 +126,16 @@ def user_html():
 
     history = user.history
     historylist = list(history.split(","))
-    test = []
-    test2 = []
+    foodhistory = []
     i = 0
-    while i < len(historylist):
-      test += historylist[i]
-      i = i + 1
-
-    # meal = foods[0]
-    # identifier = foods[9]
-    # foods.execute("SELECT meal FROM foods WHERE historylist[i] = identifier[i]")
-
-    for food in foods:
-        while i < len(historylist):
-          if historylist[i] == int(food[9]):
-            test2 += food[0]
-            i = i + 1
-
-
+    for i in historylist:
+      i = int(i)
+      # historylist contains indexes of foods so we select whatever food has each index once per loop.
+      foodhistory.append(c.execute("SELECT meal FROM food WHERE Identifier = " + str(i)).fetchone())
+    conn.close()
 
     if request.method == 'GET':
-      return render_template('user.html', username=username, remaining=remaining, weekly=weekly, vegetarian=vegetarian, vegan=vegan, no_dairy=no_dairy, history=history, test=test, test2=test2)
+      return render_template('user.html', username=username, remaining=remaining, weekly=weekly, vegetarian=vegetarian, vegan=vegan, no_dairy=no_dairy, history=history, test=foodhistory)
     else:
       return user_html()
 
