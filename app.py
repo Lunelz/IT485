@@ -121,6 +121,7 @@ def user_html():
     test = []
     test2 = []
     i = 0
+
     while i < len(historylist):
       test += historylist[i]
       i = i + 1
@@ -129,12 +130,16 @@ def user_html():
     # identifier = foods[9]
     # foods.execute("SELECT meal FROM foods WHERE historylist[i] = identifier[i]")
 
-    for food in foods:
-        while i < len(historylist):
-          if historylist[i] == int(food[9]):
-            test2 += food[0]
-            i = i + 1
+    # for food in foods:
+    #     while i < len(historylist):
+    #       test2 += (food[0])[historylist[i]]
+          # if int(historylist[i]) == int(food[9]):
+          # test2 += str(food[0])
+          #   i = i + 1
 
+          
+
+        
 
 
     if request.method == 'GET':
