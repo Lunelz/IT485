@@ -17,16 +17,23 @@ h1, h2, h3, h4, h5, h6 {
 
 <Body>
 
+
 <!-- Code for topnav-->
 <header>
   <a class="logo" href="/"><img src="/static/imgs/logo.png" alt="logo" style="height:60px;"></a>
   <nav>
       <ul class="nav__links">
-          <li><a href="index.html">Home</a></li>
-          <li><a href="About.html">About</a></li>
+          <li><a href="/">Home</a></li>
+          <li><a href="MyCalories.html">My Calories</a></li>
+          <li><a href="about.html">About</a></li>
+
       </ul>
   </nav>
   <button onclick="document.getElementById('id01').style.display='block'" class="log" style="width:auto;">{% if session['username']%}Logout{%else%}Login{%endif%}</button>
+  <a class="log" href="{{url_for('login')}}">Login</a>
+  <a class="log" href="{{url_for('register')}}">Register</a>
+  <!--<button onclick="document.getElementById('id01').style.display='block'" class="log" style="width:auto;">Login</button>-->
+
   <p class="menu">Menu</p>
 </header>
 <div class="overlay">

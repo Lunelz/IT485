@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>My Account</title>
+    <link href="/static/user.css" rel="stylesheet" type="text/css" />
+</head>
+
+<!-- Code for topnav-->
+<header>
+    <a class="logo" href="/"><img src="/static/imgs/logo.png" alt="logo" style="height:60px;"></a>
+    <nav>
+        <ul class="nav__links">
+            <!-- <li><a href="/">Home</a></li> -->
+            <li><a href="calc.html">Calculator</a></li>
+            <li><a href="user.html">My Account</a></li>
+            <li><a href="tracker.html">Tracker</a></li>
+            <li><a href="about.html">About</a></li>
+        </ul>
+    </nav>
+    <a class="log" href="{{url_for('logout')}}">Logout</a>
+    <p class="menu">Menu</p>
+  </header>
+  <div class="overlay">
+    <a class="close">&times;</a>
+    <div class="overlay__content">
+        <a href="#">Home</a>
+        <a href="#">My Calories</a>
+        <a href="#">About</a>
+    </div>
+  </div>
+  <script type="text/javascript" src="mobile.js"></script>
+
+<body>
+<table class="user-table">
+    <th colspan="2" > <!-- username -->
+
+        <p class="username">{{username}}</p>
+
+    </th>
+
+    <tr class="alt1"> <!-- remaining calorie intake --> 
+        <td class="left-lane">
+        Remaining Calories
+        </td>
+        <td>
+            {{remaining}}
+        </td>
+    </tr>
+
+    <tr class="alt2"> <!-- weekly calorie intake -->
+        <td class="left-lane">
+            Weekly Calorie Allowance
+        </td>
+        <td>
+            {{weekly}}
+        </td>
+    </tr>
+
+    <tr class="alt1"> <!-- vegetarian -->
+        <td class="left-lane">
+            Vegetarian
+        </td>
+        <td>
+            {{vegetarian}}
+        </td>
+    </tr>
+
+    <tr class="alt2"> <!-- vegen -->
+        <td class="left-lane">
+            Vegan
+        </td>
+        <td>
+            {{vegan}}
+        </td>
+    </tr>
+
+    <tr class="alt1"> <!-- no dairy -->
+        <td class="left-lane">
+            Non-dairy
+        </td>
+        <td>
+            {{no_dairy}}
+        </td>
+    </tr>
+
+    <th colspan="2" > <!-- button that takes users back to calculator to edit values -->
+        <form class="edit-button" action="calc.html" method="get">
+            <input type="submit" value="Make Changes" 
+                 name="Submit" id="frm1_submit" />
+        </form>
+    </th>
+</table>
+
+<p>{{test}}</p>
+<p>{{test2}}</p>
+
+<!-- <ul>
+    <li></li>
+    <li></li>
+    <li></li>
+    <li></li>
+    <li></li>
+    <li></li>
+    <li></li>
+    <li></li>
+    <li></li>
+    <li></li>
+</ul> -->
+
+
+</body>

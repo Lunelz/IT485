@@ -1,5 +1,5 @@
 from asyncio.windows_events import NULL
-from flask import Flask, render_template, request, url_for, redirect
+from flask import Flask, render_template, request, url_for, redirect, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
@@ -11,6 +11,8 @@ import requests
 import json
 import sqlite3
 from random import shuffle
+from datetime import datetime, timedelta
+from threading import Timer
 
 #Flask Instance
 app = Flask(__name__)
@@ -65,6 +67,7 @@ class LoginForm(FlaskForm):
 
     submit = SubmitField('Login')
 
+
 @app.route('/', methods=['GET', 'POST'])
 def homepage_html():
   form = LoginForm()
@@ -87,7 +90,77 @@ def calc_html():
     else:
       return calc_result()
 
+@app.route('/about.html', methods=['GET', 'POST'])
+def about_html():
+    if request.method == 'GET':
+      return render_template('about.html')
+    else:
+      return about_html()
 
+@app.route('/user.html', methods=['GET', 'POST'])
+def user_html():
+    user = User.query.filter_by(username=current_user.username).first()
+    conn = sqlite3.connect('sqlite/food.db')
+    c = conn.cursor()
+    c.execute("SELECT * FROM food")
+    foods = c.fetchall()
+    conn.commit()
+    conn.close()  
+    # meal = foods[0]
+    # identifier = foods[1]
+    username = user.username
+    remaining = user.remainingCalorieIntake
+    weekly =  user.weeklyCalorieIntake
+    if user.vegetarian == 0:
+      vegetarian = "No"
+    else:
+      vegetarian = "Yes"
+    if user.vegan == 0:
+      vegan = "No"
+    else:
+      vegan = "Yes"
+    if user.no_dairy == 0:
+      no_dairy = "No"
+    else:
+      no_dairy = "Yes"   
+
+    history = user.history
+    historylist = list(history.split(","))
+    test = []
+    test2 = []
+    i = 0
+    while i < len(historylist):
+      test += historylist[i]
+      i = i + 1
+
+    # meal = foods[0]
+    # identifier = foods[9]
+    # foods.execute("SELECT meal FROM foods WHERE historylist[i] = identifier[i]")
+
+    for food in foods:
+        while i < len(historylist):
+          if historylist[i] == int(food[9]):
+            test2 += food[0]
+            i = i + 1
+
+
+
+    if request.method == 'GET':
+      return render_template('user.html', username=username, remaining=remaining, weekly=weekly, vegetarian=vegetarian, vegan=vegan, no_dairy=no_dairy, history=history, test=test, test2=test2)
+    else:
+      return user_html()
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).first()
+        if user:
+            if bcrypt.check_password_hash(user.password, form.password.data):
+                login_user(user)
+                session['logged_in'] = True
+                return redirect(url_for('calc_html'))
+    return render_template('brian_login.html', form=form)
 
 
 #@app.route('/dashboard', methods=['GET', 'POST'])
@@ -100,7 +173,8 @@ def calc_html():
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('login'))
+    session['logged_in'] = False
+    return redirect(url_for('home'))
 
 
 @ app.route('/register', methods=['GET', 'POST'])
@@ -117,6 +191,26 @@ def register():
     return render_template('brian_register.html', form=form)
 
 currentfood = ""
+
+def select_food():
+    user = User.query.filter_by(username=current_user.username).first()
+    conn = sqlite3.connect('sqlite/food.db')
+    c = conn.cursor()
+    c.execute("SELECT * FROM food")
+    foods = c.fetchall()
+    conn.commit()
+    conn.close()
+    shuffle(foods)
+    for food in foods:
+        food_cals = food[1]
+        food_vegetarian = food[5]
+        food_nodairy = food[6]
+        food_vegan = food[7]
+        if (user.vegetarian == 1 and food_vegetarian != 1) or (user.vegan == 1 and food_vegan != 1) or (user.no_dairy == 1 and food_nodairy != 1): continue
+        if food_cals <= user.remainingCalorieIntake:
+            return food
+    return -1
+
 @app.route('/tracker.html', methods=['GET', 'POST'])
 def tracker_html():
     if request.method == 'GET':
@@ -162,7 +256,31 @@ def tracker_html():
               'tracker.html',
               result = "No food has been selected."
             )
-          
+
+"""@ app.route('/dailyintake', methods=['GET', 'POST'])
+def dailyintake():
+    form = CalcForm()
+
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data)
+        new_user = User(username=form.username.data, password=hashed_password)
+        db.session.add(new_user)
+        db.session.commit()
+        return redirect(url_for('login'))
+
+    return render_template('brian_register.html', form=form)
+"""
+
+"""if __name__ == '__main__':
+    app.debug = True
+    app.run()
+
+if __name__ == '__main__':
+    with app.app_context():
+      app.debug = True
+      app.run()
+"""
+
 # Calculator operations
 def calc_result(): 
   print(request.form)
@@ -184,6 +302,7 @@ def calc_result():
       Gender=gender,
       result="Don't leave blank input fields!"
     )
+
   weight_input=int(weight_input)
   heightft_input=int(heightft_input)
   heightin_input=int(heightin_input)
@@ -242,6 +361,24 @@ def select_food():
         if food_cals <= user.remainingCalorieIntake:
             return food
     return -1
+
+
+
+def calorie_refill():
+  user = User.query.filter_by(username=current_user.username).first()
+  # user.remainingCalorieIntake = user.weeklyCalorieIntake
+  user.remainingCalorieIntake = user.remainingCalorieIntake - 1
+  db.session.commit()
+
+def weekly_reset():
+  x=datetime.today()
+  y = x.replace(day=x.day, hour=0, minute=0, second=0, microsecond=0) + timedelta(seconds=1)
+  delta_t=y-x
+
+  secs=delta_t.total_seconds()
+
+  t = Timer(secs, calorie_refill)
+  t.start()
 
 if __name__ == '__main__':
     with app.app_context():
