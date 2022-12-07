@@ -135,9 +135,9 @@ def tracker_html():
           return render_template(
             'tracker.html',
             result = food[0],
-            result2 = food[1]
-            result3 = food[3]
-            result4 = food[6]
+            result2 = food[1],
+            result3 = food[3],
+            result4 = food[6],
           )
       else:
           if currentfood != "":
