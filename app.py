@@ -64,22 +64,28 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Login')
 
 @app.route('/', methods=['GET', 'POST'])
+def homepage_html():
+  form = LoginForm()
+  if request.method == 'GET':
+    return render_template('index.html', form=form)
+  else:
+    if form.validate_on_submit():
+      user = User.query.filter_by(username=form.username.data).first()
+      if user:
+          if bcrypt.check_password_hash(user.password, form.password.data):
+              login_user(user)
+              return redirect(url_for('tracker_html'))
+  return render_template('brian_login.html', form=form)
+
+
+@app.route('/calculator', methods=['GET', 'POST'])
 def calc_html():
     if request.method == 'GET':
       return render_template('calc.html')
     else:
       return calc_result()
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
-        if user:
-            if bcrypt.check_password_hash(user.password, form.password.data):
-                login_user(user)
-                return redirect(url_for('tracker_html'))
-    return render_template('brian_login.html', form=form)
+
 
 
 #@app.route('/dashboard', methods=['GET', 'POST'])
@@ -130,6 +136,8 @@ def tracker_html():
             'tracker.html',
             result = food[0],
             result2 = food[1]
+            result3 = food[3]
+            result4 = food[6]
           )
       else:
           if currentfood != "":
@@ -164,7 +172,6 @@ def calc_result():
   vegetarian_input = "Vegetarian" in request.form
   vegan_input = "Vegan" in request.form
   nodairy_input = "NoDairy" in request.form
-
   if weight_input == "" or heightft_input == "" or heightin_input == "" or age_input == "" or gender == "":
     return render_template(
       'calc.html',
@@ -175,7 +182,6 @@ def calc_result():
       Gender=gender,
       result="Don't leave blank input fields!"
     )
-
   weight_input=int(weight_input)
   heightft_input=int(heightft_input)
   heightin_input=int(heightin_input)
@@ -235,11 +241,8 @@ def select_food():
             return food
     return -1
 
-
 if __name__ == '__main__':
     with app.app_context():
       db.create_all()
       app.debug = True
-      app.run()
-
-    
+      app.run() 
