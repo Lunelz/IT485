@@ -92,10 +92,17 @@ def about_html():
 @app.route('/user.html', methods=['GET', 'POST'])
 def user_html():
     user = User.query.filter_by(username=current_user.username).first()
+    conn = sqlite3.connect('sqlite/food.db')
+    c = conn.cursor()
+    c.execute("SELECT * FROM food")
+    foods = c.fetchall()
+    conn.commit()
+    conn.close()  
+    # meal = foods[0]
+    # identifier = foods[1]
     username = user.username
     remaining = user.remainingCalorieIntake
     weekly =  user.weeklyCalorieIntake
-    # vegetarian = user.vegetarian
     if user.vegetarian == 0:
       vegetarian = "No"
     else:
@@ -107,11 +114,31 @@ def user_html():
     if user.no_dairy == 0:
       no_dairy = "No"
     else:
-      no_dairy = "Yes"
-    # vegan = user.vegan
-    # no_dairy = user.no_dairy
+      no_dairy = "Yes"   
+
+    history = user.history
+    historylist = list(history.split(","))
+    test = []
+    test2 = []
+    i = 0
+    while i < len(historylist):
+      test += historylist[i]
+      i = i + 1
+
+    # meal = foods[0]
+    # identifier = foods[9]
+    # foods.execute("SELECT meal FROM foods WHERE historylist[i] = identifier[i]")
+
+    for food in foods:
+        while i < len(historylist):
+          if historylist[i] == int(food[9]):
+            test2 += food[0]
+            i = i + 1
+
+
+
     if request.method == 'GET':
-      return render_template('user.html', username=username, remaining=remaining, weekly=weekly, vegetarian=vegetarian, vegan=vegan, no_dairy=no_dairy)
+      return render_template('user.html', username=username, remaining=remaining, weekly=weekly, vegetarian=vegetarian, vegan=vegan, no_dairy=no_dairy, history=history, test=test, test2=test2)
     else:
       return user_html()
 
@@ -156,6 +183,26 @@ def register():
     return render_template('brian_register.html', form=form)
 
 currentfood = ""
+
+def select_food():
+    user = User.query.filter_by(username=current_user.username).first()
+    conn = sqlite3.connect('sqlite/food.db')
+    c = conn.cursor()
+    c.execute("SELECT * FROM food")
+    foods = c.fetchall()
+    conn.commit()
+    conn.close()
+    shuffle(foods)
+    for food in foods:
+        food_cals = food[1]
+        food_vegetarian = food[5]
+        food_nodairy = food[6]
+        food_vegan = food[7]
+        if (user.vegetarian == 1 and food_vegetarian != 1) or (user.vegan == 1 and food_vegan != 1) or (user.no_dairy == 1 and food_nodairy != 1): continue
+        if food_cals <= user.remainingCalorieIntake:
+            return food
+    return -1
+
 @app.route('/tracker.html', methods=['GET', 'POST'])
 def tracker_html():
     if request.method == 'GET':
@@ -292,24 +339,7 @@ if __name__ == "__main__":
     db.create_all()
   app.run(debug=True)
 
-def select_food():
-    user = User.query.filter_by(username=current_user.username).first()
-    conn = sqlite3.connect('sqlite/food.db')
-    c = conn.cursor()
-    c.execute("SELECT * FROM food")
-    foods = c.fetchall()
-    conn.commit()
-    conn.close()
-    shuffle(foods)
-    for food in foods:
-        food_cals = food[1]
-        food_vegetarian = food[5]
-        food_nodairy = food[6]
-        food_vegan = food[7]
-        if (user.vegetarian == 1 and food_vegetarian != 1) or (user.vegan == 1 and food_vegan != 1) or (user.no_dairy == 1 and food_nodairy != 1): continue
-        if food_cals <= user.remainingCalorieIntake:
-            return food
-    return -1
+
 
 def calorie_refill():
   user = User.query.filter_by(username=current_user.username).first()
