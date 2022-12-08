@@ -69,13 +69,21 @@ class LoginForm(FlaskForm):
 
 
 @app.route('/', methods=['GET', 'POST'])
-def home():
-    if request.method == 'GET':
-      return render_template('index.html')
-    else:
-      return home()
+def homepage_html():
+  form = LoginForm()
+  if request.method == 'GET':
+    return render_template('index.html', form=form)
+  else:
+    if form.validate_on_submit():
+      user = User.query.filter_by(username=form.username.data).first()
+      if user:
+          if bcrypt.check_password_hash(user.password, form.password.data):
+              login_user(user)
+              return redirect(url_for('tracker_html'))
+  return render_template('brian_login.html', form=form)
 
-@app.route('/calc.html', methods=['GET', 'POST'])
+
+@app.route('/calculator', methods=['GET', 'POST'])
 def calc_html():
     if request.method == 'GET':
       return render_template('calc.html')
@@ -94,10 +102,10 @@ def user_html():
     user = User.query.filter_by(username=current_user.username).first()
     conn = sqlite3.connect('sqlite/food.db')
     c = conn.cursor()
-    c.execute("SELECT * FROM food")
-    foods = c.fetchall()
-    conn.commit()
-    conn.close()  
+    # c.execute("SELECT * FROM food")
+    # foods = c.fetchall()
+    # conn.commit()
+    # conn.close()  
     # meal = foods[0]
     # identifier = foods[1]
     username = user.username
@@ -118,32 +126,16 @@ def user_html():
 
     history = user.history
     historylist = list(history.split(","))
-    test = []
-    test2 = []
+    foodhistory = []
     i = 0
-
-    while i < len(historylist):
-      test += historylist[i]
-      i = i + 1
-
-    # meal = foods[0]
-    # identifier = foods[9]
-    # foods.execute("SELECT meal FROM foods WHERE historylist[i] = identifier[i]")
-
-    # for food in foods:
-    #     while i < len(historylist):
-    #       test2 += (food[0])[historylist[i]]
-          # if int(historylist[i]) == int(food[9]):
-          # test2 += str(food[0])
-          #   i = i + 1
-
-          
-
-        
-
+    for i in historylist:
+      i = int(i)
+      # historylist contains indexes of foods so we select whatever food has each index once per loop.
+      foodhistory.append(c.execute("SELECT meal FROM food WHERE Identifier = " + str(i)).fetchone())
+    conn.close()
 
     if request.method == 'GET':
-      return render_template('user.html', username=username, remaining=remaining, weekly=weekly, vegetarian=vegetarian, vegan=vegan, no_dairy=no_dairy, history=history, test=test, test2=test2)
+      return render_template('user.html', username=username, remaining=remaining, weekly=weekly, vegetarian=vegetarian, vegan=vegan, no_dairy=no_dairy, history=history, test=foodhistory)
     else:
       return user_html()
 
@@ -228,7 +220,9 @@ def tracker_html():
           return render_template(
             'tracker.html',
             result = food[0],
-            result2 = food[1]
+            result2 = food[1],
+            result3 = food[3],
+            result4 = food[6],
           )
       else:
           if currentfood != "":
@@ -255,21 +249,18 @@ def tracker_html():
 """@ app.route('/dailyintake', methods=['GET', 'POST'])
 def dailyintake():
     form = CalcForm()
-
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data)
         new_user = User(username=form.username.data, password=hashed_password)
         db.session.add(new_user)
         db.session.commit()
         return redirect(url_for('login'))
-
     return render_template('brian_register.html', form=form)
 """
 
 """if __name__ == '__main__':
     app.debug = True
     app.run()
-
 if __name__ == '__main__':
     with app.app_context():
       app.debug = True
@@ -287,7 +278,6 @@ def calc_result():
   vegetarian_input = "Vegetarian" in request.form
   vegan_input = "Vegan" in request.form
   nodairy_input = "NoDairy" in request.form
-
   if weight_input == "" or heightft_input == "" or heightin_input == "" or age_input == "" or gender == "":
     return render_template(
       'calc.html',
@@ -298,7 +288,7 @@ def calc_result():
       Gender=gender,
       result="Don't leave blank input fields!"
     )
-#
+
   weight_input=int(weight_input)
   heightft_input=int(heightft_input)
   heightin_input=int(heightin_input)
@@ -339,10 +329,24 @@ def calc_result():
     result=BMR
   )
 
-if __name__ == "__main__":
-  with app.app_context():
-    db.create_all()
-  app.run(debug=True)
+def select_food():
+    user = User.query.filter_by(username=current_user.username).first()
+    conn = sqlite3.connect('sqlite/food.db')
+    c = conn.cursor()
+    c.execute("SELECT * FROM food")
+    foods = c.fetchall()
+    conn.commit()
+    conn.close()
+    shuffle(foods)
+    for food in foods:
+        food_cals = food[1]
+        food_vegetarian = food[5]
+        food_nodairy = food[6]
+        food_vegan = food[7]
+        if (user.vegetarian == 1 and food_vegetarian != 1) or (user.vegan == 1 and food_vegan != 1) or (user.no_dairy == 1 and food_nodairy != 1): continue
+        if food_cals <= user.remainingCalorieIntake:
+            return food
+    return -1
 
 
 
@@ -362,11 +366,8 @@ def weekly_reset():
   t = Timer(secs, calorie_refill)
   t.start()
 
-
 if __name__ == '__main__':
     with app.app_context():
       db.create_all()
       app.debug = True
-      app.run()
-
-    
+      app.run() 

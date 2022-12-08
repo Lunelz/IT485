@@ -29,6 +29,7 @@ h1, h2, h3, h4, h5, h6 {
 
       </ul>
   </nav>
+  <button onclick="document.getElementById('id01').style.display='block'" class="log" style="width:auto;">{% if session['username']%}Logout{%else%}Login{%endif%}</button>
   <a class="log" href="{{url_for('login')}}">Login</a>
   <a class="log" href="{{url_for('register')}}">Register</a>
   <!--<button onclick="document.getElementById('id01').style.display='block'" class="log" style="width:auto;">Login</button>-->
@@ -191,20 +192,21 @@ h1, h2, h3, h4, h5, h6 {
   
   <div id="id01" class="modal">
     
-    <form class="modal-content animate" action="/action_page.php" method="post">
+    <form class="modal-content animate" method="POST" action="">
       <div class="imgcontainer">
         <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
         <img src="img_avatar2.png" alt="Avatar" class="avatar">
       </div>
   
       <div class="container">
-        <label for="uname"><b>Username</b></label>
-        <input type="text" placeholder="Enter Username" name="uname" required>
-  
-        <label for="psw"><b>Password</b></label>
-        <input type="password" placeholder="Enter Password" name="psw" required>
-          
-        <button type="submit">Login</button>
+        {{ form.hidden_tag() }}
+        <label for="username_field"><b>Username</b></label>
+        {{ form.username }}
+        
+        <label for="psw_field"><b>Password</b></label>
+        {{ form.password }}
+        
+        {{ form.submit }}
         <label>
           <input type="checkbox" checked="checked" name="remember"> Remember me
         </label>

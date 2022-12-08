@@ -4,8 +4,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
-    <title>Calculator</title>
-    <link href="/static/style.css" rel="stylesheet" type="text/css" />
+    <title>Calorie</title>
+    <link href="/static/tracker.css" rel="stylesheet" type="text/css" />
 </head>
 
 <!-- Code for topnav-->
@@ -17,10 +17,9 @@
             <li><a href="calc.html">Calculator</a></li>
             <li><a href="user.html">My Account</a></li>
             <li><a href="tracker.html">Tracker</a></li>
-            <li><a href="about.html">About</a></li>
         </ul>
     </nav>
-    <a class="log" href="{{url_for('logout')}}">Logout</a>
+    <a class="log" href="{{url_for('login')}}">Logout</a>
     <p class="menu">Menu</p>
   </header>
   <div class="overlay">
@@ -33,9 +32,18 @@
   </div>
   <script type="text/javascript" src="mobile.js"></script>
 <!-- End topnav code-->
-
+<style>
+    body {
+       background-image: url("/static/imgs/back6.jpeg");
+       background-repeat: no-repeat;
+       background-attachment: fixed;
+       background-size: cover;
+    }
+ </style>
+<br><br><br>
 <form method="post" action="{{ url_for('calc_html')}}" id="calculator_form">
 <div class="inputs">
+    <h2>Calorie Calculator!</h2><br>
     <label for="Weight">Weight:</label>
     <input type="number" name="Weight" id="Weight" value={{Weight}}>lbs
     <br/>
@@ -52,22 +60,30 @@
         <option value="Woman" {% if Gender == "Woman" %} selected {% endif %}>Woman</option>
         <option value="Man" {% if Gender == "Man" %} selected {% endif %}>Man</option>
     </select>
-    
+    <br><br>
+    <h2>Your preferences</h2>
+    (These do not affect your calorie score)
+    <br>
     <br/>
     <label class="checkbox">Vegetarian
         <input type="checkbox" {{"checked = 'checked'" if Vegetarian else ""}} name="Vegetarian" id="Vegetarian">
+        <span class="checkmark"></span>
     </label>
     <label class="checkbox">Vegan
         <input type="checkbox" {{"checked = 'checked'" if Vegan else ""}} name="Vegan" id="Vegan">
+        <span class="checkmark"></span>
     </label>
     <label class="checkbox">No dairy
         <input type="checkbox" {{"checked = 'checked'" if NoDairy else ""}} name="NoDairy" id="NoDairy">
+        <span class="checkmark"></span>
     </label>
-    <br/>
+    <br/><br><br>
 
-    <input type="submit" value="Calculate">
-    <input type="reset" value="Reset" style="color: red;"/>
+    <input type="submit" class =calcbtn value="Calculate">
+    <input type="reset" class= resetbtn value="Reset">
 </div>
-{{result}}
+
+<div class="cal_result">{{result}}</div>
 </form>
+
 </html>
