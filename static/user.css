@@ -150,10 +150,11 @@
         /* padding: 200px; */
         /* border-spacing: 20px; */
         /* margin-left: 500px; */
-
         margin-left: auto;
-        margin-right: auto;
+        /* margin-right: auto; */
         padding-top: 10px;
+        /* display:inline-block; */
+        /* float: left; */
   }
     .user-table tr td{
         padding: 10px 20px 2px 20px;
@@ -184,4 +185,34 @@
         margin-top: 10px;
         /* padding: 2px */
     }
+
+    .statement{
+      text-align: center;
+      padding-top: 20px;
+      color: #42523c;
+      font-size: 25px;
+      font-weight: bold;
+      font-family: arial;
+      width: 50%;
+    }
+
+    .food-history{
+      text-align: center;
+      color: black;
+      font-family: Arial, Helvetica, sans-serif;
+      padding: 1px;
+      width: 50%;
+    }
   
+
+    .col {
+      float: left;
+      width: 50%;
+    }
+    
+    /* Clear floats after the columns */
+    .row:after {
+      content: "";
+      display: table;
+      clear: both;
+    }

@@ -133,9 +133,111 @@ def user_html():
       # historylist contains indexes of foods so we select whatever food has each index once per loop.
       foodhistory.append(c.execute("SELECT meal FROM food WHERE Identifier = " + str(i)).fetchone())
     conn.close()
+    
+    try:
+      food24 = str(foodhistory[24]).strip("()',")
+    except IndexError:
+      food24 = ''
+    try:
+      food23 = str(foodhistory[23]).strip("()',")
+    except IndexError:
+      food23 = ''
+    try:
+      food22 = str(foodhistory[22]).strip("()',")
+    except IndexError:
+      food22 = ''
+    try:
+      food21 = str(foodhistory[21]).strip("()',")
+    except IndexError:
+      food21 = ''
+    try:
+      food20 = str(foodhistory[20]).strip("()',")
+    except IndexError:
+      food20 = ''
+    try:
+      food19 = str(foodhistory[19]).strip("()',")
+    except IndexError:
+      food19 = ''
+    try:
+      food18 = str(foodhistory[18]).strip("()',")
+    except IndexError:
+      food18 = ''
+    try:
+      food17 = str(foodhistory[17]).strip("()',")
+    except IndexError:
+      food17 = ''
+    try:
+      food16 = str(foodhistory[16]).strip("()',")
+    except IndexError:
+      food16 = ''
+    try:
+      food15 = str(foodhistory[15]).strip("()',")
+    except IndexError:
+      food15 = ''    
+    try:
+      food14 = str(foodhistory[14]).strip("()',")
+    except IndexError:
+      food14 = ''
+    try:
+      food13 = str(foodhistory[13]).strip("()',")
+    except IndexError:
+      food13 = ''
+    try:
+      food12 = str(foodhistory[12]).strip("()',")
+    except IndexError:
+      food12 = ''
+    try:
+      food11 = str(foodhistory[11]).strip("()',")
+    except IndexError:
+      food11 = ''
+    try:
+      food10 = str(foodhistory[10]).strip("()',")
+    except IndexError:
+      food10 = ''
+    try:
+      food9 = str(foodhistory[9]).strip("()',")
+    except IndexError:
+      food9 = ''
+    try:
+      food8 = str(foodhistory[8]).strip("()',")
+    except IndexError:
+      food8 = ''
+    try:
+      food7 = str(foodhistory[7]).strip("()',")
+    except IndexError:
+      food7 = ''
+    try:
+      food6 = str(foodhistory[6]).strip("()',")
+    except IndexError:
+      food1 = ''
+    try:
+      food5 = str(foodhistory[5]).strip("()',")
+    except IndexError:
+      food5 = ''
+    try:
+      food4 = str(foodhistory[4]).strip("()',")
+    except IndexError:
+      food4 = ''    
+    try:
+      food3 = str(foodhistory[3]).strip("()',")
+    except IndexError:
+      food3 = ''
+    try:
+      food2 = str(foodhistory[2]).strip("()',")
+    except IndexError:
+      food2 = ''
+    try:
+      food1 = str(foodhistory[1]).strip("()',")
+    except IndexError:
+      food1 = ''
+    try:
+      food0 = str(foodhistory[0]).strip("()',")
+    except IndexError:
+      food0 = ''
+
 
     if request.method == 'GET':
-      return render_template('user.html', username=username, remaining=remaining, weekly=weekly, vegetarian=vegetarian, vegan=vegan, no_dairy=no_dairy, history=history, test=foodhistory)
+      return render_template('user.html', username=username, remaining=remaining, weekly=weekly, vegetarian=vegetarian, vegan=vegan, no_dairy=no_dairy, history=history, food24=food24, food23=food23, food22=food22, food21=food21, food20=food20, food19=food19, food18=food18, food17=food17, food16=food16, food15=food15, food14=food14, food13=food13,food12=food12, food11=food11, food10=food10, food9=food9, food8=food8, food7=food7, food6=food6,food5=food5,food4=food4,food3=food3, food2=food2, food1=food1, food0=food0)
     else:
       return user_html()
 
