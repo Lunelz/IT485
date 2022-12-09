@@ -125,16 +125,140 @@ def user_html():
       no_dairy = "Yes"   
 
     history = user.history
-    historylist = list(history.split(","))
+    try: 
+      historylist = list(history.split(","))
+    except AttributeError:
+       pass
     foodhistory = []
-    i = 0
-    for i in historylist:
-      i = int(i)
+    # try:
+    i=0
+    x=0
+    try:
+      for i in historylist:
+        i = int(i)
+
       # historylist contains indexes of foods so we select whatever food has each index once per loop.
-      foodhistory.append(c.execute("SELECT meal FROM food WHERE Identifier = " + str(i)).fetchone())
+        foodhistory.append(c.execute("SELECT meal FROM food WHERE Identifier = " + str(i)).fetchone())
+        x+=1
+    except UnboundLocalError:
+      pass
+
+
     conn.close()
+    # i=0
+    # test=historylist
+    # while i < len(historylist):
+    #   test += historylist[i]
+    #   i = i + 1
+
+    try:
+        food24 = str(foodhistory[-1]).strip("()',")
+    except IndexError:
+        food24 = ''
+    try:
+        food23 = str(foodhistory[-2]).strip("()',")
+    except IndexError:
+        food23 = ''
+    try:
+        food22 = str(foodhistory[-3]).strip("()',")
+    except IndexError:
+        food22 = ''
+    try:
+        food21 = str(foodhistory[-4]).strip("()',")
+    except IndexError:
+        food21 = ''
+    try:
+        food20 = str(foodhistory[-5]).strip("()',")
+    except IndexError:
+        food20 = ''
+    try:
+        food19 = str(foodhistory[-6]).strip("()',")
+    except IndexError:
+        food19 = ''
+    try:
+        food18 = str(foodhistory[-7]).strip("()',")
+    except IndexError:
+        food18 = ''
+    try:
+        food17 = str(foodhistory[-8]).strip("()',")
+    except IndexError:
+        food17 = ''
+    try:
+        food16 = str(foodhistory[-9]).strip("()',")
+    except IndexError:
+        food16 = ''
+    try:
+        food15 = str(foodhistory[-10]).strip("()',")
+    except IndexError:
+        food15 = ''    
+    try:
+        food14 = str(foodhistory[-11]).strip("()',")
+    except IndexError:
+        food14 = ''
+    try:
+        food13 = str(foodhistory[-12]).strip("()',")
+    except IndexError:
+        food13 = ''
+    try:
+        food12 = str(foodhistory[-13]).strip("()',")
+    except IndexError:
+        food12 = ''
+    try:
+        food11 = str(foodhistory[-14]).strip("()',")
+    except IndexError:
+        food11 = ''
+    try:
+        food10 = str(foodhistory[-15]).strip("()',")
+    except IndexError:
+        food10 = ''
+    try:
+        food9 = str(foodhistory[-16]).strip("()',")
+    except IndexError:
+        food9 = ''
+    try:
+        food8 = str(foodhistory[-17]).strip("()',")
+    except IndexError:
+        food8 = ''
+    try:
+        food7 = str(foodhistory[-18]).strip("()',")
+    except IndexError:
+        food7 = ''
+    try:
+        food6 = str(foodhistory[-19]).strip("()',")
+    except IndexError:
+        food6 = ''
+    try:
+        food5 = str(foodhistory[-20]).strip("()',")
+    except IndexError:
+        food5 = ''
+    try:
+        food4 = str(foodhistory[-21]).strip("()',")
+    except IndexError:
+        food4 = ''    
+    try:
+        food3 = str(foodhistory[-22]).strip("()',")
+    except IndexError:
+        food3 = ''
+    try:
+        food2 = str(foodhistory[-23]).strip("()',")
+    except IndexError:
+        food2 = ''
+    try:
+        food1 = str(foodhistory[-24]).strip("()',")
+    except IndexError:
+        food1 = ''
+    try:
+        food0 = str(foodhistory[-25]).strip("()',")
+    except IndexError:
+        food0 = ''
+
+
+
     if request.method == 'GET':
-      return render_template('user.html', username=username, remaining=remaining, weekly=weekly, vegetarian=vegetarian, vegan=vegan, no_dairy=no_dairy, history=history, test=foodhistory)
+        return render_template('user.html', username=username, remaining=remaining, weekly=weekly, vegetarian=vegetarian, vegan=vegan, no_dairy=no_dairy, history=history, food24=food24, food23=food23, food22=food22, food21=food21, food20=food20, food19=food19, food18=food18, food17=food17, food16=food16, food15=food15, food14=food14, food13=food13,food12=food12, food11=food11, food10=food10, food9=food9, food8=food8, food7=food7, food6=food6,food5=food5,food4=food4,food3=food3, food2=food2, food1=food1, food0=food0)
+
+# 
+
     else:
       return user_html()
 
@@ -248,21 +372,18 @@ def tracker_html():
 """@ app.route('/dailyintake', methods=['GET', 'POST'])
 def dailyintake():
     form = CalcForm()
-
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data)
         new_user = User(username=form.username.data, password=hashed_password)
         db.session.add(new_user)
         db.session.commit()
         return redirect(url_for('login'))
-
     return render_template('brian_register.html', form=form)
 """
 
 """if __name__ == '__main__':
     app.debug = True
     app.run()
-
 if __name__ == '__main__':
     with app.app_context():
       app.debug = True
