@@ -83,7 +83,7 @@ def homepage_html():
   return render_template('brian_login.html', form=form)
 
 
-@app.route('/calculator', methods=['GET', 'POST'])
+@app.route('/calc.html', methods=['GET', 'POST'])
 def calc_html():
     if request.method == 'GET':
       return render_template('calc.html')
@@ -133,7 +133,6 @@ def user_html():
       # historylist contains indexes of foods so we select whatever food has each index once per loop.
       foodhistory.append(c.execute("SELECT meal FROM food WHERE Identifier = " + str(i)).fetchone())
     conn.close()
-
     if request.method == 'GET':
       return render_template('user.html', username=username, remaining=remaining, weekly=weekly, vegetarian=vegetarian, vegan=vegan, no_dairy=no_dairy, history=history, test=foodhistory)
     else:
@@ -230,9 +229,9 @@ def tracker_html():
             user.remainingCalorieIntake -= currentfood[1]
             if user.history is None or user.history == "":
               user.history = ""
-              user.history += str(currentfood[9])
+              user.history += str(currentfood[7])
             else:
-              user.history += "," + str(currentfood[9])
+              user.history += "," + str(currentfood[7])
             db.session.commit()
             selectedfood = currentfood
             currentfood = ""
