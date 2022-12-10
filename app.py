@@ -5,7 +5,7 @@ from flask_migrate import Migrate
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import InputRequired, Length, ValidationError
+from wtforms.validators import InputRequired, Length, ValidationError, EqualTo
 from flask_bcrypt import Bcrypt
 import requests
 import json
@@ -48,7 +48,8 @@ class RegisterForm(FlaskForm):
 
     password = PasswordField(validators=[
                              InputRequired(), Length(min=8, max=20)], render_kw={"placeholder": "Password"})
-
+    password2 = PasswordField(validators=[
+                             InputRequired(), EqualTo('password')], render_kw={"placeholder": "Repeat Password"})
     submit = SubmitField('Register')
 
     def validate_username(self, username):
@@ -80,7 +81,7 @@ def homepage_html():
           if bcrypt.check_password_hash(user.password, form.password.data):
               login_user(user)
               return redirect(url_for('tracker_html'))
-  return render_template('brian_login.html', form=form)
+  return render_template('index.html', form=form)
 
 
 @app.route('/calc.html', methods=['GET', 'POST'])
@@ -89,13 +90,6 @@ def calc_html():
       return render_template('calc.html')
     else:
       return calc_result()
-
-@app.route('/about.html', methods=['GET', 'POST'])
-def about_html():
-    if request.method == 'GET':
-      return render_template('about.html')
-    else:
-      return about_html()
 
 @app.route('/user.html', methods=['GET', 'POST'])
 def user_html():
@@ -257,7 +251,6 @@ def user_html():
     if request.method == 'GET':
         return render_template('user.html', username=username, remaining=remaining, weekly=weekly, vegetarian=vegetarian, vegan=vegan, no_dairy=no_dairy, history=history, food24=food24, food23=food23, food22=food22, food21=food21, food20=food20, food19=food19, food18=food18, food17=food17, food16=food16, food15=food15, food14=food14, food13=food13,food12=food12, food11=food11, food10=food10, food9=food9, food8=food8, food7=food7, food6=food6,food5=food5,food4=food4,food3=food3, food2=food2, food1=food1, food0=food0)
 
-# 
 
     else:
       return user_html()
@@ -272,8 +265,7 @@ def login():
                 login_user(user)
                 session['logged_in'] = True
                 return redirect(url_for('calc_html'))
-    return render_template('brian_login.html', form=form)
-
+    return render_template('index.html', form=form)
 
 #@app.route('/dashboard', methods=['GET', 'POST'])
 #@login_required
@@ -286,10 +278,10 @@ def login():
 def logout():
     logout_user()
     session['logged_in'] = False
-    return redirect(url_for('home'))
+    return redirect(url_for('homepage_html'))
 
 
-@ app.route('/register', methods=['GET', 'POST'])
+@ app.route('/register.html', methods=['GET', 'POST'])
 def register():
     form = RegisterForm()
 
@@ -300,7 +292,7 @@ def register():
         db.session.commit()
         return redirect(url_for('login'))
 
-    return render_template('brian_register.html', form=form)
+    return render_template('register.html', form=form)
 
 currentfood = ""
 
@@ -451,25 +443,6 @@ def calc_result():
     NoDairy=nodairy_input,
     result=BMR
   )
-
-def select_food():
-    user = User.query.filter_by(username=current_user.username).first()
-    conn = sqlite3.connect('sqlite/food.db')
-    c = conn.cursor()
-    c.execute("SELECT * FROM food")
-    foods = c.fetchall()
-    conn.commit()
-    conn.close()
-    shuffle(foods)
-    for food in foods:
-        food_cals = food[1]
-        food_vegetarian = food[5]
-        food_nodairy = food[6]
-        food_vegan = food[7]
-        if (user.vegetarian == 1 and food_vegetarian != 1) or (user.vegan == 1 and food_vegan != 1) or (user.no_dairy == 1 and food_nodairy != 1): continue
-        if food_cals <= user.remainingCalorieIntake:
-            return food
-    return -1
 
 
 

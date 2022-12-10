@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link href="/static/register.css" rel="stylesheet" type="text/css" />
+</head>
+
+<!-- Code for topnav-->
+<header>
+    <a class="logo" href="/"><img src="/static/imgs/logo.png" alt="logo" style="height:60px;"></a>
+    <nav>
+        <ul class="nav__links">
+            <li><a href="/">Home</a></li>
+  
+        </ul>
+    </nav>
+    <button class="log" onclick="window.location.href='/';">Return</button>
+  
+    <!--<button onclick="document.getElementById('id01').style.display='block'" class="log" style="width:auto;">Login</button>-->
+  
+    <p class="menu">Menu</p>
+  </header>
+  <div class="overlay">
+    <a class="close">&times;</a>
+    <div class="overlay__content">
+    </div>
+  </div>
+  <script type="text/javascript" src="mobile.js"></script>
+<div class="content">
+    
+
+    <form method="POST" action="">
+        <br><br><h1>Register</h1><br>
+        Please fill out this form to create an account<br><br>
+        {{ form.hidden_tag() }}
+        Create Username:<br>
+        {{ form.username }}<br>
+        Create Password:<br>
+        {{ form.password }}<br>
+        Repeat Password:<br>
+        {{ form.password2 }}<br>
+        {{ form.submit }}<br><br>
+        <div class="signin">
+            <a href="index.html">Already have an account? Log In</a>
+        </div>
+    </form>
+
+    <style>
+        body {
+           background-image: url("/static/imgs/back7.jpeg");
+           background-repeat: no-repeat;
+           background-attachment: fixed;
+           background-size: cover;
+        }
+     </style>
+    
+</div>
+</body>
+
+</html>

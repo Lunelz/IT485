@@ -222,3 +222,14 @@ display:block;
 background-color: white;
 border-radius: 5px;
 }
+
+input[name="submit"] {
+  background-color: #04AA6D;
+  color: white;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 4%;
+  padding: 10px 18px;
+  opacity: 0.9;
+}

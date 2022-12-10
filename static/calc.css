@@ -1,4 +1,4 @@
-/* Styling for topnav*/
+/*Start navbar styles*/
 #imghead{
     display:flex;
     padding-bottom: 25px;
@@ -21,15 +21,6 @@
     background-color: #D7DECA;
   }
   
-  .content
-    {
-    font-family: 'Times New Roman';
-    font-size:15px;
-    padding-left:10px;
-    margin-top: 3%;
-    letter-spacing: 2px;
-    } 
-    
   .logo {
     cursor: pointer;
   }
@@ -72,34 +63,12 @@
   .log:hover {
     background-color: #568161;
   }
-  
-  .select
-  {
-    align-items: right;
-  }
-  
-  .form
-  {
-    text-align: center;
-  }
-  .form input
-  {
-    width: 100px;
-    height: 35px;
-    font-size: 15px;
-    letter-spacing: 1px;
-    margin-top: 30px;
-    margin-bottom: 30px;
-    background-color: #8AAB94;
-  }
-  .form div
-  {
-    margin-top: 20px;
-    margin-bottom: 20px;
-  }
-  
-  
+
   /* Mobile Nav */
+
+.menu{
+    display: none;
+  }
   
   .overlay {
     height: 100%;
@@ -144,8 +113,6 @@
     color: #edf0f1;
   }
   
-  
-  
   @media screen and (max-height: 450px) {
     .overlay a {
       font-size: 20px;
@@ -165,12 +132,6 @@
     .menu {
       display: initial;
     }
-    #myLinks
-    {
-    display: initial;
-  }
-  
-  
   }
   
   
@@ -186,3 +147,134 @@
     transition: all 0.3s ease;
   
   }
+  /*Styling for form*/
+  .inputs {
+    padding: 16px;
+    text-align: center;
+  }
+
+  input[type=number] {
+    width: 20%;
+    padding: 15px;
+    margin: 5px 0 22px 0;
+    display: inline-block;
+    border: none;
+    background: rgb(201, 207, 200);
+  }
+
+  input[type=number]:focus {
+    background-color: rgb(143, 160, 149);
+    outline: none;
+  }
+
+hr {
+  border: 1px solid #f1f1f1;
+  margin-bottom: 25px;
+}
+
+/* Style for the calc button */
+.calcbtn {
+  background-color: #42523C;
+  color: white;
+  padding: 16px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 25%;
+  opacity: 0.9;
+}
+
+.resetbtn {
+  background-color: #c78726;
+  color: white;
+  padding: 16px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 25%;
+  opacity: 0.9;
+}
+
+.calcbtn:hover, .resetbtn:hover {
+  opacity: 1;
+}
+
+
+/* Checkbox styling */
+.checkbox {
+  position:relative;
+  margin-bottom: 12px;
+  cursor: pointer;
+  padding-left: 35px;
+  font-size: 17px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  text-align: center; 
+}
+
+/* Hides the browser's default checkbox */
+.checkbox input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/*checkmark styling*/
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: rgb(201, 207, 200);
+}
+
+.checkbox:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+
+.checkbox input:checked ~ .checkmark {
+  background-color: #24252a;
+}
+
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.checkbox input:checked ~ .checkmark:after {
+  display: block;
+}
+
+.checkbox .checkmark:after {
+  left: 9px;
+  top: 5px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+.cal_result {
+text-align: center;
+letter-spacing: 3px;
+color: #4CAF50;
+border: 1px solid gray;
+padding: 16px 20px;
+box-sizing:border-box;
+border-radius: 25px;
+width: 25%;
+margin:auto;
+}
+
+
+
+
