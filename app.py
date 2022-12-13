@@ -311,8 +311,9 @@ def select_food():
         food_nodairy = food[6]
         food_vegan = food[7]
         if (user.vegetarian == 1 and food_vegetarian != 1) or (user.vegan == 1 and food_vegan != 1) or (user.no_dairy == 1 and food_nodairy != 1): continue
-        if food_cals <= user.remainingCalorieIntake:
-            return food
+        if int(food_cals) <= int(user.remainingCalorieIntake):
+              return food
+
     return -1
 
 @app.route('/tracker.html', methods=['GET', 'POST'])
@@ -332,12 +333,17 @@ def tracker_html():
           )
         else:
           currentfood = food
+          result4 = food[6]
+          if result4 != None:
+            pass
+          else:
+            result4 = "No URL available"
           return render_template(
             'tracker.html',
             result = food[0],
-            result2 = food[1],
-            result3 = food[3],
-            result4 = food[6],
+            result2 = str(food[1])+' calories',
+            result3 = str(food[2]),
+            result4 = result4,
           )
       else:
           if currentfood != "":
