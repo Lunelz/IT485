@@ -96,12 +96,6 @@ def user_html():
     user = User.query.filter_by(username=current_user.username).first()
     conn = sqlite3.connect('sqlite/food.db')
     c = conn.cursor()
-    # c.execute("SELECT * FROM food")
-    # foods = c.fetchall()
-    # conn.commit()
-    # conn.close()  
-    # meal = foods[0]
-    # identifier = foods[1]
     username = user.username
     remaining = user.remainingCalorieIntake
     weekly =  user.weeklyCalorieIntake
@@ -139,11 +133,6 @@ def user_html():
 
 
     conn.close()
-    # i=0
-    # test=historylist
-    # while i < len(historylist):
-    #   test += historylist[i]
-    #   i = i + 1
 
     try:
         food24 = str(foodhistory[-1]).strip("()',")
@@ -267,11 +256,6 @@ def login():
                 return redirect(url_for('calc_html'))
     return render_template('index.html', form=form)
 
-#@app.route('/dashboard', methods=['GET', 'POST'])
-#@login_required
-#def dashboard():
-#    return render_template('dashboard.html')
-
 
 @app.route('/logout', methods=['GET', 'POST'])
 @login_required
@@ -307,9 +291,9 @@ def select_food():
     shuffle(foods)
     for food in foods:
         food_cals = food[1]
-        food_vegetarian = food[5]
-        food_nodairy = food[6]
-        food_vegan = food[7]
+        food_vegetarian = food[3]
+        food_nodairy = food[4]
+        food_vegan = food[5]
         if (user.vegetarian == 1 and food_vegetarian != 1) or (user.vegan == 1 and food_vegan != 1) or (user.no_dairy == 1 and food_nodairy != 1): continue
         if food_cals <= user.remainingCalorieIntake:
             return food
@@ -336,21 +320,21 @@ def tracker_html():
             'tracker.html',
             result = food[0],
             result2 = food[1],
-            result3 = food[3],
+            result3 = food[2],
             result4 = food[6],
           )
-      else:
-          if currentfood != "":
-            user = User.query.filter_by(username=current_user.username).first()
+      else: #If they click select
+          if currentfood != "": #Look if current food is not empty -- if they hit select before calculate this would be empty.
+            user = User.query.filter_by(username=current_user.username).first() 
             user.remainingCalorieIntake -= currentfood[1]
-            if user.history is None or user.history == "":
-              user.history = ""
+            if user.history is None or user.history == "": #If user.history is empty, we do not want it to start with a comma.
+              user.history = "" #This is in case that user.history is none, so this'll convert it to a string so that we can then add the string current food.
               user.history += str(currentfood[7])
             else:
               user.history += "," + str(currentfood[7])
             db.session.commit()
-            selectedfood = currentfood
-            currentfood = ""
+            selectedfood = currentfood #Saving currentfood before emptying the value so we can print out a message.
+            currentfood = "" #Current food had to be cleared because otherwise people would be able to keep selected the current food. Due to it being a global variable and the contents stored outside of the function.
             return render_template(
               'tracker.html',
               result = selectedfood[0]+" has been selected!"
@@ -360,27 +344,6 @@ def tracker_html():
               'tracker.html',
               result = "No food has been selected."
             )
-
-"""@ app.route('/dailyintake', methods=['GET', 'POST'])
-def dailyintake():
-    form = CalcForm()
-    if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(form.password.data)
-        new_user = User(username=form.username.data, password=hashed_password)
-        db.session.add(new_user)
-        db.session.commit()
-        return redirect(url_for('login'))
-    return render_template('brian_register.html', form=form)
-"""
-
-"""if __name__ == '__main__':
-    app.debug = True
-    app.run()
-if __name__ == '__main__':
-    with app.app_context():
-      app.debug = True
-      app.run()
-"""
 
 # Calculator operations
 def calc_result(): 
@@ -421,9 +384,9 @@ def calc_result():
     BMR = round(66.47 + (6.24 * weight_input) + (12.7 * totalinches) - (6.75 * age_input))
 
   user = User.query.filter_by(username=current_user.username).first()
-  user.weeklyCalorieIntake = BMR
+  user.weeklyCalorieIntake = BMR * 7
   if user.remainingCalorieIntake is None:
-    user.remainingCalorieIntake = BMR
+    user.remainingCalorieIntake = BMR * 7
   user.vegetarian = vegetarian_input
   user.vegan = vegan_input
   user.no_dairy = nodairy_input
@@ -441,7 +404,7 @@ def calc_result():
     Vegetarian=vegetarian_input,
     Vegan=vegan_input,
     NoDairy=nodairy_input,
-    result=BMR
+    result=BMR *7
   )
 
 

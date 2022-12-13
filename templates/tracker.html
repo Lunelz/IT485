@@ -16,11 +16,10 @@
             <!-- <li><a href="/">Home</a></li> -->
             <li><a href="calc.html">Calculator</a></li>
             <li><a href="user.html">My Account</a></li>
-            <li><a href="tracker.html">Tracker</a></li>
+            <li><a href="tracker.html">Meal Suggestion</a></li>
         </ul>
     </nav>
     <a class="log" href="{{url_for('logout')}}">Logout</a>
-    <p class="menu">Menu</p>
   </header>
   <div class="overlay">
     <a class="close">&times;</a>
@@ -33,6 +32,15 @@
   </div>
   <script type="text/javascript" src="mobile.js"></script>
 
+<style>
+    body {
+       background-image: url("/static/imgs/back6.jpeg");
+       background-repeat: no-repeat;
+       background-attachment: fixed;
+       background-size: cover;
+    }
+ </style>
+
 <body>
     <div class="form"> 
     <form method="post" action="{{ url_for('tracker_html')}}" id="tracker_form">
@@ -42,10 +50,10 @@
         <div class="inputs">
             <input type="submit" value="Calculate" name="booton">
         </div>
-        <div class="FoodName">{{result}}</div>
-        <div class="CalorieCount">{{result2}}</div>
-        <div class="Category">{{result3}}</div>
-        <div class="Link">{{result4}}</div>
+        <div class="FoodName">Name: {{result}}</div>
+        <div class="CalorieCount">Calories: {{result2}}</div>
+        <div class="Category">Category: {{result3}}</div>
+        <div class="Link">Link: {{result4}}</div>
         <input type="submit" value="Select" name="booton">
         </form>
 </body>
